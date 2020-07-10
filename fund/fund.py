@@ -10,16 +10,16 @@ import getpass
 import json
 import logging
 import os
-import re
+# import re
 import sys
-from pprint import pprint
+# from pprint import pprint
 from random import randint, random
 from time import monotonic, sleep, strftime, time, localtime
 # from collections import OrderedDict
 from urllib.parse import quote_plus, urlencode
 
-import demjson
-import MySQLdb
+#import demjson
+# import MySQLdb
 import requests
 from sqlalchemy import (Boolean, Column, DateTime, Integer, String, create_engine, desc, func, text)
 from sqlalchemy.ext.declarative import declarative_base
@@ -68,8 +68,9 @@ db_session = ''
 db_funds = {}
 
 
-def init(db_user, db_passwd, db_host, db_name):
-    engine = create_engine("mysql+mysqldb://{}:{}@{}:3306/{}?charset=utf8mb4&binary_prefix=true".format(
+def db_init(db_user, db_passwd, db_host, db_name):
+    # engine = create_engine("mysql+mysqldb://{}:{}@{}:3306/{}?charset=utf8mb4&binary_prefix=true".format(
+    engine = create_engine("mysql+mysqldb://{}:{}@{}:21852/{}?charset=utf8mb4&binary_prefix=true".format(
         db_user, quote_plus(db_passwd), db_host, db_name))
 
     Base.metadata.create_all(engine)
@@ -139,7 +140,7 @@ def do_howbuy():
                 items.append(fund)
                 db_funds[j['jjdm']] = fund
 
-        if len(items) == 1000:
+        if i == 1000:
             db_session.add_all(items)
             db_session.commit()
             items.clear()
@@ -219,7 +220,7 @@ if __name__ == "__main__":
 
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
-    init(db_user, db_passwd, db_host, db_name)
+    db_init(db_user, db_passwd, db_host, db_name)
 
     do_howbuy()
 
@@ -232,4 +233,4 @@ if __name__ == "__main__":
     db_session.commit()
     db_session.close()
 
-    logging.info('cost {:.2f} seconds!'.format(monotonic() - s_time))
+    logging.info('fund cost {:.2f} seconds!'.format(monotonic() - s_time))
